@@ -68,29 +68,6 @@ def show_vid():
         show_text[0] = maxindex
     if flag1 is None:
         print("Major error!")
-    elif flag1:
-        global last_frame1
-        last_frame1 = frame1.copy()
-        pic = cv2.cvtColor(last_frame1, cv2.COLOR_BGR2RGB)
-        img = Image.fromarray(pic)
-        imgtk = ImageTk.PhotoImage(image=img)
-        lmain.imgtk = imgtk
-        lmain.configure(image=imgtk)
-        root.update()
-        lmain.after(10, show_vid)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        exit()
-
-
-def show_vid2():
-    frame2 = cv2.imread(emoji_dist[show_text[0]])
-    img2 = Image.fromarray(frame2)
-    imgtk2 = ImageTk.PhotoImage(image=img2)
-    lmain2.imgtk2 = imgtk2
-    lmain3.configure(text=emotion_dict[show_text[0]], font=('arial', 45, 'bold'))
-    lmain2.configure(image=imgtk2)
-    root.update()
-    lmain2.after(10, show_vid2)
 
 
 if __name__ == '__main__':
@@ -114,7 +91,7 @@ if __name__ == '__main__':
     root['bg'] = 'black'
     exitbutton = Button(root, text='Quit', fg="red", command=root.destroy, font=('arial', 25, 'bold')).pack(side=BOTTOM)
     #show_vid()
-    #show_vid2()
+    
     threading.Thread(target=show_vid).start()
-    threading.Thread(target=show_vid2).start()
+    
     root.mainloop()
