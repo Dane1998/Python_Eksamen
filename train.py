@@ -60,7 +60,7 @@ network_model_info = network_model.fit(
     validation_data=validation_generator,
     validation_steps=7178 // 64)
 
-network_model.save_weights('model.h5')
+network_model.save_weights('trained_face_model.h5')
 
 cv2.ocl.setUseOpenCL(False)
 emotion_dict = {0: "Angry", 1: "Disgusted", 2: "Fearful", 3: "Happy", 4: "Neutral", 5: "Sad", 6: "Surprised"}
@@ -69,7 +69,7 @@ while True:
     ret, frame = capture.read()
     if not ret:
         break
-    face_cascade = cv2.CascadeClassifier( 'C:/Users/danie/AppData/Local/Programs/Python/Python39/Lib/site-packages/cv2/data/haarcascade_frontalface_default.xml')
+    face_cascade = cv2.CascadeClassifier('C:/Users/danie/AppData/Local/Programs/Python/Python39/Lib/site-packages/cv2/data/haarcascade_frontalface_default.xml')
     gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
     num_faces = face_cascade.detectMultiScale(
         gray_frame, scaleFactor=1.3, minNeighbors=5)

@@ -11,11 +11,6 @@ from keras.layers import MaxPooling2D
 import os
 import threading
 
-from fastapi import FastAPI
-
-app = FastAPI()
-
-
 
 network_model = Sequential()
 
@@ -33,7 +28,7 @@ network_model.add(Dense(1024, activation='relu'))
 network_model.add(Dropout(0.5))
 network_model.add(Dense(7, activation='softmax'))
 
-network_model.load_weights('model.h5')
+network_model.load_weights('trained_face_model.h5')
 
 cv2.ocl.setUseOpenCL(False)
 
@@ -58,7 +53,7 @@ def show_camera():
     #cap1.set(1, frame_number)
     ret, camera_frame = capture.read() #ret returns true if camera is available
     camera_frame = cv2.resize(camera_frame, (600, 500))
-    bounding_box = cv2.CascadeClassifier('C:/Users/danie/AppData/Local/Programs/Python/Python39/Lib/site-packages/cv2/data/haarcascade_frontalface_default.xml')
+    bounding_box = cv2.CascadeClassifier('Indstast stien til haarcascade_frontalface_default.xml')
     gray_frame = cv2.cvtColor(camera_frame, cv2.COLOR_BGR2GRAY)
     num_faces = bounding_box.detectMultiScale(gray_frame, scaleFactor=1.3, minNeighbors=5)
     for (x, y, w, h) in num_faces:
@@ -98,7 +93,7 @@ def show_emoji():
     
 if __name__ == '__main__':
     root = tk.Tk()
-    heading2 = Label(root, text="EMOJI CAM", pady=20, font=('arial', 45, 'bold'), bg='black', fg='#CDCDCD')
+    heading2 = Label(root, text="Python Eksamen", pady=20, font=('arial', 45, 'bold'), bg='black', fg='#CDCDCD')
     heading2.pack()
     camera_label = tk.Label(master=root, padx=50, bd=10)
     emoji_label = tk.Label(master=root, bd=10)
@@ -109,10 +104,10 @@ if __name__ == '__main__':
     emoji_text.place(x=1300, y=180)
     emoji_label.pack(side=RIGHT)
     emoji_label.place(x=1100, y=300)
-    root.title("EMOJI CAM")
+    root.title("Python Eksamen")
     root.geometry("1400x900+100+10")
     root['bg'] = 'black'
-    exitbutton = Button(root, text='Quit', fg="red", command=root.destroy, font=('arial', 25, 'bold')).pack(side=BOTTOM)
+    exitbutton = Button(root, text='Quit', fg="blue", command=root.destroy, font=('arial', 25, 'bold')).pack(side=BOTTOM)
     #show_camera()
     #show_emoji()
     threading.Thread(target=show_camera).start()
