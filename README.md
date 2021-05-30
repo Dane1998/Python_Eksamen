@@ -20,7 +20,7 @@
 #### Du har nu installeret alle de libraries der kræver for at køre programmet. 
 #### Programmet kræver at du har et webcam tilsluttet til din computer. 
 
-#### Du skal i emoji_cam.py filen på linje 56, give den stien til din egen haarcascade. 
+#### Du skal i emoji_cam.py filen på linje 56, give den stien til din egen haarcascade_frontalface_default.xml fil. 
 #### Eksembel kunne dette være stien
 (C:/Users/danie/AppData/Local/Programs/Python/Python39/Lib/site-packages/cv2/data/haarcascade_frontalface_default.xml) 
 #### For at køre programmet cd'er du dig vej hen til der hvor projekter er gemt, stiller dig i projekt mappen og skriver "emoji_cam.py"
