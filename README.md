@@ -17,7 +17,7 @@
 #### pip install Numpy 
 #### pip install Pillow  
 #### pip install tk 
-#### pip install tersorfLow 
+#### pip install tersorflow 
 #### Du har nu installeret alle de libraries der kræver for at køre programmet. 
 #### Programmet kræver at du har et webcam tilsluttet til din computer. 
 
