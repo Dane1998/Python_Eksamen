@@ -11,7 +11,7 @@
 
 ### Installations Guide 
 #### Vi har brugt python 3.9 og pip til at installere vores libraries.  
-#### Du skal åbne Command Promt og kan derefter taste: 
+#### Du skal åbne Command Promt som administator og kan derefter taste: 
 #### pip install Keras  
 #### pip install opencv-python  
 #### pip install Numpy 
