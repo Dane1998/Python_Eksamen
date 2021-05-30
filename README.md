@@ -25,3 +25,8 @@
 #### Eksembel kunne dette være stien
 (C:/Users/danie/AppData/Local/Programs/Python/Python39/Lib/site-packages/cv2/data/haarcascade_frontalface_default.xml) 
 #### For at køre programmet cd'er du dig vej hen til der hvor projekter er gemt, stiller dig i projekt mappen og skriver "emoji_cam.py"
+  
+  
+### Status for projektet 
+#### Programmet kører som det skal og vi kom i mål med vores ide. Programmet er dog ikke deployet til en server. 
+#### Kameraret "plejer" at være dygtig til at genkende dit ansigtsudtryk, og den er hurtig til at finde den passende emoji.
