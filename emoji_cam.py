@@ -9,12 +9,12 @@ from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D
 from keras.layers import MaxPooling2D
 import os
-import threading
 
+cascade_file = "C:/Users/danie/AppData/Local/Programs/Python/Python39/Lib/site-packages/cv2/data/haarcascade_frontalface_default.xml"
 
 network_model = Sequential()
 
-network_model.add(Conv2D(32, kernel_size=(  3, 3), activation='relu', input_shape=(48, 48, 1)))
+network_model.add(Conv2D(32, kernel_size=(3, 3), activation='relu', input_shape=(48, 48, 1)))
 network_model.add(Conv2D(64, kernel_size=(3, 3), activation='relu'))
 network_model.add(MaxPooling2D(pool_size=(2, 2)))
 network_model.add(Dropout(0.25))
@@ -30,45 +30,41 @@ network_model.add(Dense(7, activation='softmax'))
 
 network_model.load_weights('trained_face_model.h5')
 
-cv2.ocl.setUseOpenCL(False)
-
 emotion_dict = {0: "   Angry   ", 1: "Disgusted", 2: "  Fearful  ", 3: "   Happy   ", 4: "  Neutral  ", 5: "    Sad    ", 6: "Surprised"}
 cur_path = os.path.dirname(os.path.abspath(__file__))
-emoji_dict = {0:cur_path +"/emoji/angry.png",2:cur_path +"/emoji/disgusted.png",2:cur_path +"/emoji/fearful.png",3:cur_path +"/emoji/happy.png",4:cur_path +"/emoji/neutral.png",5:cur_path +"/emoji/sad.png",6:cur_path +"/emoji/surpriced.png"}
+emoji_dict = {0:cur_path +"/emoji/angry.png",1:cur_path +"/emoji/disgusted.png",2:cur_path +"/emoji/fearful.png",3:cur_path +"/emoji/happy.png",4:cur_path +"/emoji/neutral.png",5:cur_path +"/emoji/sad.png",6:cur_path +"/emoji/surpriced.png"}
 #emoji_dict = ["/emoji/angry.png", "/emoji/disgusted.png", "/emoji/fearful.png", "/emoji/happy.png", "/emoji/neutral.png", "/emoji/sad.png", "/emoji/surpriced.png"]
-global frame
-frame = np.zeros((480, 640, 3), dtype=np.uint8)
-global capture
-show_text = [0]
+global frame # Bliver ikke brugt
+frame = np.zeros((480, 640, 3), dtype=np.uint8) # Bliver ikke brugt
+global capture # Bliver ikke brugt 
+show_text = [0] # Bliver ikke brugt 
 
 def show_camera():
-    capture = cv2.VideoCapture(0, cv2.CAP_DSHOW)
-    if not capture.isOpened():
-        print("cant open the camera")
-    #global frame_number
-    #length = int(cap1.get(cv2.CAP_PROP_FRAME_COUNT))
-    #frame_number += 1
-    #if frame_number >= length:
-    #   exit()
-    #cap1.set(1, frame_number)
-    ret, camera_frame = capture.read() #ret returns true if camera is available
-    camera_frame = cv2.resize(camera_frame, (600, 500))
-    bounding_box = cv2.CascadeClassifier('Indstast stien til haarcascade_frontalface_default.xml')
-    gray_frame = cv2.cvtColor(camera_frame, cv2.COLOR_BGR2GRAY)
-    num_faces = bounding_box.detectMultiScale(gray_frame, scaleFactor=1.3, minNeighbors=5)
-    for (x, y, w, h) in num_faces:
-        cv2.rectangle(camera_frame, (x, y-50), (x+w, y+h+10), (255, 0, 0), 2)
-        roi_gray_frame = gray_frame[y:y + h, x:x + w]
-        cropped_img = np.expand_dims(np.expand_dims(cv2.resize(roi_gray_frame, (48, 48)), -1), 0)
-        prediction = network_model.predict(cropped_img)
-        maxindex = int(np.argmax(prediction))
-        font = cv2.FONT_HERSHEY_SIMPLEX
-        cv2.putText(camera_frame, emotion_dict[maxindex], (x+20, y-60), font, 1, (255, 255, 255), 2, cv2.LINE_AA)
-        show_text[0] = maxindex
-    if ret is None:
-        print("Major error!")
-    elif ret:
-        global frame
+    capture = cv2.VideoCapture(0)
+
+    while capture.isOpened():
+        ok, camera_frame = capture.read()
+
+        if not ok:
+            continue
+            
+        camera_frame = cv2.resize(camera_frame, (600, 500))
+
+        bounding_box = cv2.CascadeClassifier(cascade_file)
+
+        gray_frame = cv2.cvtColor(camera_frame, cv2.COLOR_BGR2GRAY)
+        
+        num_faces = bounding_box.detectMultiScale(gray_frame, scaleFactor=1.3, minNeighbors=5) #Scale reducer image size, neighbors = quality of deceted
+        for (x, y, w, h) in num_faces:
+            cv2.rectangle(camera_frame, (x, y-50), (x+w, y+h+10), (0,128,0), 2)
+            roi_gray_frame = gray_frame[y:y + h, x:x + w]
+            cropped_img = np.expand_dims(np.expand_dims(cv2.resize(roi_gray_frame, (48, 48)), -1), 0)
+            prediction = network_model.predict(cropped_img)
+            maxindex = int(np.argmax(prediction))
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            cv2.putText(camera_frame, emotion_dict[maxindex], (x+20, y-60), font, 1, (0,0,255), 2, cv2.LINE_AA)
+            show_emoji_by_index(maxindex)
+
         frame = camera_frame.copy()
         pic = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         img = Image.fromarray(pic)
@@ -76,22 +72,21 @@ def show_camera():
         camera_label.imgtk = imgtk
         camera_label.configure(image=imgtk)
         root.update()
-        camera_label.after(10, show_camera)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        exit()
 
+        if cv2.waitKey(1) & 0xFF == ord('q'):
+            break
 
-def show_emoji():
-    emoji_frame = cv2.imread(emoji_dict[show_text[0]])
+def show_emoji_by_index(index):
+    emoji_frame = cv2.imread(emoji_dict[index])
     img2 = Image.fromarray(emoji_frame)
     imgtk2 = ImageTk.PhotoImage(image=img2)
     emoji_label.imgtk2 = imgtk2
-    emoji_text.configure(text=emotion_dict[show_text[0]], font=('arial', 40, 'bold'))
+    emoji_text.configure(text=emotion_dict[index], font=('arial', 40, 'bold'))
     emoji_label.configure(image=imgtk2)
-    emoji_label.after(10, show_emoji)
     
     
 if __name__ == '__main__':
+    print("hek")
     root = tk.Tk()
     heading2 = Label(root, text="Python Eksamen", pady=20, font=('arial', 45, 'bold'), bg='black', fg='#CDCDCD')
     heading2.pack()
@@ -108,8 +103,8 @@ if __name__ == '__main__':
     root.geometry("1400x900+100+10")
     root['bg'] = 'black'
     exitbutton = Button(root, text='Quit', fg="blue", command=root.destroy, font=('arial', 25, 'bold')).pack(side=BOTTOM)
-    #show_camera()
+    show_camera()
     #show_emoji()
-    threading.Thread(target=show_camera).start()
-    threading.Thread(target=show_emoji).start()
-    root.mainloop()
+    #threading.Thread(target=show_camera).start()
+    #threading.Thread(target=show_emoji).start()
+    #root.mainloop()
